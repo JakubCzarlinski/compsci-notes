@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [[ "$OSTYPE" == "msys" ]]; then
+    docker run --rm \
+        -e RUN_LOCAL=true \
+        --env-file ".github/super-linter.env" \
+        -v C:${PWD:2:${#PWD}}:/tmp/lint \
+        github/super-linter:latest
+else
+    docker run --rm \
+        -e RUN_LOCAL=true \
+        --env-file ".github/super-linter.env" \
+        -v $PWD:/tmp/lint \
+        github/super-linter:latest
+fi
