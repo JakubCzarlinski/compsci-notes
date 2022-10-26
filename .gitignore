@@ -1,1 +1,10 @@
+# Ignore all
+*
+# Unignore all with extensions
+!*.*
+# Unignore all dirs
+!*/
+# Above ignores all files with no extensions, for example compiled c
+# executabeles
+
 *.log
