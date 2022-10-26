@@ -7,7 +7,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-int main() {
+int createProcess() {
   pid_t childPid = 0;
   childPid = fork();
 
@@ -15,10 +15,12 @@ int main() {
     // For failed forks, PID is negative.
     printf("Error: Fork Failed");
     return 1;
+
   } else if (childPid == 0) {
     // The child sees it's PID as 0, because at the moment the process is
     // forked, pid = 0. So the memory that is copied, includes the pid = 0.
     execlp("/bin/ls", "ls", "-l", NULL);
+
   } else {
     // Wait untill any of child processes have finished.
     wait(NULL);
