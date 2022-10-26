@@ -4,7 +4,7 @@
 !*.*
 # Unignore all dirs
 !*/
-# Above ignores all files with no extensions, for example compiled c
-# executabeles
+# Above ignores all files with no extensions.
 
 *.log
+*.o
