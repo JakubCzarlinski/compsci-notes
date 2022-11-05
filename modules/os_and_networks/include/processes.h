@@ -6,5 +6,6 @@
 #define MODULES_OS_AND_NETWORKS_INCLUDE_PROCESSES_H_
 
 int createProcess();
+int createProcessWithPipes();
 
 #endif  // MODULES_OS_AND_NETWORKS_INCLUDE_PROCESSES_H_

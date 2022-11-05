@@ -6,5 +6,6 @@
 !*/
 # Above ignores all files with no extensions.
 
+!Makefile
 *.log
 *.o
