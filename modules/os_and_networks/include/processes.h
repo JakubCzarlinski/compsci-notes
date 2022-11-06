@@ -7,5 +7,6 @@
 
 int createProcess();
 int createProcessWithPipes();
+int createProcessWithSharedMemory();
 
 #endif  // MODULES_OS_AND_NETWORKS_INCLUDE_PROCESSES_H_

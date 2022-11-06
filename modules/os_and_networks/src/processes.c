@@ -4,7 +4,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
+#include <sys/mman.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
@@ -61,11 +63,11 @@ int createProcessWithPipes() {
   char *buffer = calloc(BUFSIZ, sizeof(char));
 
   if (pipe(parentToChild) < 0) {
-    printf("Error: Failed to create parent to child pipe.\n");
+    fprintf(stderr, "Error: Failed to create parent to child pipe.\n");
     return -1;
   }
   if (pipe(childToParent) < 0) {
-    printf("Error: Failed to create child to parent pipe.\n");
+    fprintf(stderr, "Error: Failed to create child to parent pipe.\n");
     return -1;
   }
 
@@ -110,6 +112,57 @@ int createProcessWithPipes() {
     wait(&result);
 
     printf("Parent: status = %i\n", result);
+  }
+
+  return 0;
+}
+
+
+/**
+ *  @brief  Creates a child process that will play ping-pong with the parent
+ *          using shared memory.
+ *  @return On success, returns 0. On failure, returns -1. errno is set
+ *          appropriately.
+ */
+int createProcessWithSharedMemory() {
+  printf("------------------\n");
+  printf("Shared Memory Demo\n");
+  printf("------------------\n");
+
+  // Create a shared memory segment that is readable and writable.
+  int protection = PROT_READ | PROT_WRITE;
+  int visibility = MAP_SHARED | MAP_ANONYMOUS;
+  size_t size = BUFSIZ * sizeof(char);
+  char *sharedMemory = mmap(NULL, size, protection, visibility, -1, 0);
+
+  snprintf(sharedMemory, size, "Hello from parent!");
+
+  pid_t pid = 0;
+  pid = fork();
+  if (pid < 0) {
+    printf("Error: Fork failed.\n");
+    return -1;
+
+  } else if (pid == 0) {
+    // Child process: read memory and change it to "ping!"
+    sleep(3);
+
+    printf("Child: %s\n", sharedMemory);
+    snprintf(sharedMemory, size, "ping!");
+    printf("Child: %s\n", sharedMemory);
+
+    exit(EXIT_SUCCESS);
+
+  } else {
+    // Parent process: waits for child to change memory to "ping!" the then
+    // reply pong.
+    while (strcmp("ping!", sharedMemory) != 0) {
+      sleep(1);
+      printf("Parent: waiting for child...\n");
+    }
+
+    snprintf(sharedMemory, size, "pong!");
+    printf("Parent: %s\n", sharedMemory);
   }
 
   return 0;
